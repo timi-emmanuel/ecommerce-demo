@@ -1,15 +1,8 @@
-export type ProductCategory =
-  | "Audio"
-  | "Wearables"
-  | "Home Office"
-  | "Accessories"
-  | "Fashion";
-
 export type Product = {
   id: string;
   name: string;
   slug: string;
-  category: ProductCategory;
+  category: string;
   description: string;
   price: number;
   rating: number;

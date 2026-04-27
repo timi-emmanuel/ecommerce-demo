@@ -1,12 +1,16 @@
 export const dynamic = "force-dynamic";
 
-export default function AdminProductsPage() {
+import { AdminProductManager } from "@/features/admin/products/components/AdminProductManager";
+import { getAdminProducts } from "@/features/admin/products/data/getAdminProducts";
+
+export default async function AdminProductsPage() {
+  const { products, source, fallbackReason } = await getAdminProducts();
+
   return (
-    <div className="rounded-xl border border-border/60 bg-card/70 p-8 text-card-foreground">
-      <h1 className="text-2xl font-semibold tracking-tight">Admin Products</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Placeholder page. Next step: data table for product CRUD actions.
-      </p>
-    </div>
+    <AdminProductManager
+      initialProducts={products}
+      source={source}
+      fallbackReason={fallbackReason}
+    />
   );
 }

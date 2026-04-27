@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { AddToCartButton } from "@/features/cart/components/AddToCartButton";
 import {
   Card,
   CardContent,
@@ -11,9 +11,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ProductCardImage } from "@/features/products/components/ProductCardImage";
+import { cn } from "@/lib/utils";
 import { type Product } from "@/types/product";
 
 type ProductCardProps = {
+  imageLoading?: "eager" | "lazy";
   product: Product;
 };
 
@@ -23,18 +26,19 @@ const naira = new Intl.NumberFormat("en-NG", {
   maximumFractionDigits: 0,
 });
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({
+  imageLoading = "lazy",
+  product,
+}: ProductCardProps) {
   const isOutOfStock = product.stock <= 0;
 
   return (
     <Card className="group overflow-hidden border-border/60 bg-card/80 backdrop-blur-sm">
       <div className="relative h-52 overflow-hidden">
-        <Image
+        <ProductCardImage
           src={product.imageUrl}
           alt={product.name}
-          fill
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 1024px) 100vw, 33vw"
+          loading={imageLoading}
         />
       </div>
       <CardHeader>
@@ -51,7 +55,7 @@ export function ProductCard({ product }: ProductCardProps) {
       </CardHeader>
       <CardContent>
         <p className="text-xl font-bold tracking-tight text-foreground">
-          {naira.format(product.price * 1500)}
+          {naira.format(product.price)}
         </p>
       </CardContent>
       <CardFooter className="justify-between gap-3">
@@ -60,11 +64,15 @@ export function ProductCard({ product }: ProductCardProps) {
         >
           {isOutOfStock ? "Out of stock" : `${product.stock} in stock`}
         </span>
-        <Link href={`/products/${product.slug}`}>
-          <Button size="sm" variant={isOutOfStock ? "outline" : "default"}>
-            {isOutOfStock ? "View Details" : "Add to Cart"}
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/products/${product.slug}`}
+            className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
+          >
+            View
+          </Link>
+          <AddToCartButton product={product} size="sm" />
+        </div>
       </CardFooter>
     </Card>
   );
