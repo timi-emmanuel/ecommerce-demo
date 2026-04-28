@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { verifyAdminSession } from "@/lib/auth/admin";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { type Database } from "@/types/database";
 
@@ -31,6 +32,15 @@ function sanitizeSlug(input: string) {
 
 export async function POST(request: Request) {
   try {
+    const adminCheck = await verifyAdminSession();
+
+    if (!adminCheck.ok) {
+      return NextResponse.json(
+        { error: adminCheck.error },
+        { status: adminCheck.status },
+      );
+    }
+
     const supabase = createSupabaseAdminClient();
 
     if (!supabase) {

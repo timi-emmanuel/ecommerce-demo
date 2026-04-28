@@ -51,6 +51,7 @@ export function AdminProductManager({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [busyProductId, setBusyProductId] = useState<string | null>(null);
 
   function handleTextChange(
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -152,6 +153,76 @@ export function AdminProductManager({
       );
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleToggleActive(product: AdminProduct) {
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    setBusyProductId(product.id);
+
+    try {
+      const response = await fetch(`/api/admin/products/${product.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ isActive: !product.isActive }),
+      });
+
+      const result = (await response.json()) as
+        | { error?: string; product?: AdminProduct }
+        | undefined;
+
+      if (!response.ok || !result?.product) {
+        throw new Error(result?.error || "Failed to update product.");
+      }
+
+      setProducts((current) =>
+        current.map((entry) => (entry.id === result.product?.id ? result.product : entry)),
+      );
+      setSuccessMessage(
+        `Product ${result.product.isActive ? "activated" : "deactivated"} successfully.`,
+      );
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Failed to update product.",
+      );
+    } finally {
+      setBusyProductId(null);
+    }
+  }
+
+  async function handleDelete(product: AdminProduct) {
+    const confirmed = window.confirm(`Delete "${product.name}"? This cannot be undone.`);
+
+    if (!confirmed) {
+      return;
+    }
+
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    setBusyProductId(product.id);
+
+    try {
+      const response = await fetch(`/api/admin/products/${product.id}`, {
+        method: "DELETE",
+      });
+
+      const result = (await response.json()) as { error?: string } | undefined;
+
+      if (!response.ok) {
+        throw new Error(result?.error || "Failed to delete product.");
+      }
+
+      setProducts((current) => current.filter((entry) => entry.id !== product.id));
+      setSuccessMessage("Product deleted successfully.");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Failed to delete product.",
+      );
+    } finally {
+      setBusyProductId(null);
     }
   }
 
@@ -368,6 +439,26 @@ export function AdminProductManager({
                     <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                       <span>{naira.format(product.price)}</span>
                       <span>{product.stock} in stock</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={busyProductId === product.id}
+                        onClick={() => handleToggleActive(product)}
+                      >
+                        {product.isActive ? "Deactivate" : "Activate"}
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="destructive"
+                        disabled={busyProductId === product.id}
+                        onClick={() => handleDelete(product)}
+                      >
+                        Delete
+                      </Button>
                     </div>
                   </div>
                 </div>

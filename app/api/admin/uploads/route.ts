@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { verifyAdminSession } from "@/lib/auth/admin";
 import { uploadProductImage } from "@/lib/cloudinary";
 
 function sanitizePublicId(input: string) {
@@ -13,6 +14,15 @@ function sanitizePublicId(input: string) {
 
 export async function POST(request: Request) {
   try {
+    const adminCheck = await verifyAdminSession();
+
+    if (!adminCheck.ok) {
+      return NextResponse.json(
+        { error: adminCheck.error },
+        { status: adminCheck.status },
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file");
     const slug = formData.get("slug");
