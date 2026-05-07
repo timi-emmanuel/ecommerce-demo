@@ -1,24 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  --background: oklch(0.99 0.004 95.13);
-  --foreground: oklch(0.25 0.02 255);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.25 0.02 255);
-  --primary: oklch(0.53 0.18 255);
-  --primary-foreground: oklch(0.98 0.004 95);
-  --secondary: oklch(0.95 0.009 250);
-  --secondary-foreground: oklch(0.35 0.03 255);
-  --muted: oklch(0.96 0.007 255);
-  --muted-foreground: oklch(0.5 0.02 255);
-  --accent: oklch(0.92 0.03 210);
-  --accent-foreground: oklch(0.27 0.02 255);
-  --destructive: oklch(0.62 0.2 25);
-  --destructive-foreground: oklch(0.98 0.004 95);
-  --border: oklch(0.9 0.01 255);
-  --input: oklch(0.9 0.01 255);
-  --ring: oklch(0.53 0.18 255);
-  --radius: 0.8rem;
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #f0eeed;
+  --card-foreground: #000000;
+  --primary: #000000;
+  --primary-foreground: #ffffff;
+  --secondary: #f0eeed;
+  --secondary-foreground: #666666;
+  --muted: #f5f5f5;
+  --muted-foreground: #666666;
+  --accent: #f0eeed;
+  --accent-foreground: #000000;
+  --destructive: #ff3333;
+  --destructive-foreground: #ffffff;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #000000;
+  --sale-accent-soft: #ff33331a;
+  --radius: 1.2rem;
 }
 
 @theme inline {
@@ -39,8 +40,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-ui);
+  --font-mono: var(--font-ui);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -49,6 +50,8 @@
 
 * {
   border-color: var(--border);
+  margin: 0;  
+  box-sizing: border-box;
 }
 
 body {
@@ -57,9 +60,14 @@ body {
   font-family: var(--font-sans), sans-serif;
 }
 
+.font-structure {
+  font-family: var(--font-structure), sans-serif;
+}
+
+.font-emotion {
+  font-family: var(--font-emotion), serif;
+}
+
 .app-surface {
-  background:
-    radial-gradient(circle at 2% 5%, oklch(0.9 0.05 245 / 0.35), transparent 35%),
-    radial-gradient(circle at 90% 0%, oklch(0.96 0.03 190 / 0.45), transparent 30%),
-    var(--background);
+  background: var(--background);
 }

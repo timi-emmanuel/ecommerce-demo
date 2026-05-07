@@ -1,56 +1,126 @@
-﻿import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
-
-import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getProducts } from "@/features/products/data/getProducts";
 
-export default function Home() {
+export default async function Home() {
+  const { products } = await getProducts();
   return (
-    <div className="space-y-8 py-8 sm:py-12">
-      <section className="rounded-2xl border border-border/60 bg-card/70 p-8 shadow-sm backdrop-blur-sm sm:p-12">
-        <Badge className="mb-4 gap-1" variant="secondary">
-          <Sparkles className="size-3.5" />
-          UI-First Bootstrap
-        </Badge>
-        <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-          Growth-stage e-commerce demo, built screen-first with shadcn/ui.
-        </h1>
-        <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-          This starter includes a reusable app shell, design tokens, and a
-          polished products page backed by typed mock data.
-        </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Link href="/products">
-            <Button size="lg">
-              Explore Products
-              <ArrowRight className="size-4" />
-            </Button>
-          </Link>
-          <Link href="/admin/products">
-            <Button size="lg" variant="outline">
-              Preview Admin Flow
-            </Button>
-          </Link>
-        </div>
-      </section>
+    <div className="w-full">
+      <section className="relative w-full bg-[#F2F0F1]">
+        <div className="mx-auto max-w-[1440px]">
+          {/* Main Hero Content */}
+          <div className="grid min-h-[663px] items-center gap-8 lg:grid-cols-2 lg:gap-0">
+            {/* Left Content */}
+            <div className="px-6 pt-10 pb-6 sm:px-12 lg:px-16 lg:pt-20 lg:pb-16">
+              <h1 className="max-w-[577px] text-[36px] font-black uppercase leading-[1.1] tracking-tight sm:text-[48px] lg:text-[64px]">
+                Find clothes that matches your style
+              </h1>
+              
+              <p className="mt-5 max-w-[545px] text-[14px] font-normal leading-[1.6] text-black/60 sm:text-[16px] lg:mt-8">
+                Browse through our diverse range of meticulously crafted garments, designed to bring out your individuality.
+              </p>
+              
+              <div className="pt-6 lg:pt-8">
+                <Link href="/products">
+                  <Button
+                    size="lg"
+                    className="h-[52px] rounded-full px-[54px] text-[16px] font-medium"
+                  >
+                    Shop Now
+                  </Button>
+                </Link>
+              </div>
 
-      <section className="grid gap-4 md:grid-cols-3">
-        {["Storefront", "Checkout", "Admin"].map((pillar) => (
-          <Card key={pillar} className="bg-card/65">
-            <CardHeader>
-              <CardTitle>{pillar}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
-              {pillar === "Storefront" &&
-                "Product discovery, search/filtering, and variant-ready presentation."}
-              {pillar === "Checkout" &&
-                "Cart and payment UI flow ready to wire with Paystack and Supabase."}
-              {pillar === "Admin" &&
-                "Operational screens for product updates and order state management."}
-            </CardContent>
-          </Card>
-        ))}
+              {/* Stats Section - Desktop Only in Left Column */}
+              <div className="mt-6 hidden lg:flex lg:items-center lg:gap-8 lg:mt-auto lg:pt-20">
+                <div>
+                  <p className="text-[40px] font-bold leading-[1.1] text-black">
+                    200+
+                  </p>
+                  <p className="mt-2 text-[16px] font-normal leading-[1.4] text-black/60">
+                    International Brands
+                  </p>
+                </div>
+
+                <div className="h-[52px] w-[1px] bg-black/10" />
+
+                <div>
+                  <p className="text-[40px] font-bold leading-[1.1] text-black">
+                    2,000+
+                  </p>
+                  <p className="mt-2 text-[16px] font-normal leading-[1.4] text-black/60">
+                    High-Quality Products
+                  </p>
+                </div>
+
+                <div className="h-[52px] w-[1px] bg-black/10" />
+
+                <div>
+                  <p className="text-[40px] font-bold leading-[1.1] text-black">
+                    30,000+
+                  </p>
+                  <p className="mt-2 text-[16px] font-normal leading-[1.4] text-black/60">
+                    Happy Customers
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Image */}
+            <div className="relative h-[448px] w-full sm:h-[528px] lg:h-[663px]">
+              <Image
+                src="/Hero-Image.jpg"
+                alt="Fashion hero"
+                fill
+                priority
+                className="object-cover object-top"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+              {/* Optional: Star decorations if you want them */}
+              <div className="absolute right-[50px] top-[100px] hidden lg:block">
+                {/* Add star SVG here if needed */}
+              </div>
+              <div className="absolute left-[30px] top-[200px] hidden lg:block">
+                {/* Add star SVG here if needed */}
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Section - Mobile/Tablet Only */}
+          <div className="flex items-center justify-center gap-6 border-t border-black/10 bg-[#F2F0F1] px-6 py-10 sm:gap-8 lg:hidden">
+            <div className="text-center">
+              <p className="text-[24px] font-bold leading-[1.1] text-black sm:text-[32px]">
+                200+
+              </p>
+              <p className="mt-2 text-[12px] font-normal text-black/60 sm:text-[14px]">
+                International Brands
+              </p>
+            </div>
+
+            <div className="h-[52px] w-[1px] bg-black/10" />
+
+            <div className="text-center">
+              <p className="text-[24px] font-bold leading-[1.1] text-black sm:text-[32px]">
+                2,000+
+              </p>
+              <p className="mt-2 text-[12px] font-normal text-black/60 sm:text-[14px]">
+                High-Quality Products
+              </p>
+            </div>
+
+            <div className="h-12 w-[1px] bg-black/10" />
+
+            <div className="text-center">
+              <p className="text-[24px] font-bold leading-[1.1] text-black sm:text-[32px]">
+                30,000+
+              </p>
+              <p className="mt-2 text-[12px] font-normal text-black/60 sm:text-[14px]">
+                Happy Customers
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );
