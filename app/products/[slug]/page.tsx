@@ -1,13 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronRight, ShieldCheck, Star, Truck } from "lucide-react";
+import { ChevronRight, Minus, Plus, SlidersHorizontal, Star } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
 import { AddToCartButton } from "@/features/cart/components/AddToCartButton";
 import { ProductCardImage } from "@/features/products/components/ProductCardImage";
 import { getProductBySlug, getProducts } from "@/features/products/data/getProducts";
-import { cn } from "@/lib/utils";
 
 type ProductDetailPageProps = {
   params: Promise<{
@@ -23,104 +20,106 @@ const naira = new Intl.NumberFormat("en-NG", {
 
 export async function generateStaticParams() {
   const { products } = await getProducts();
-
-  return products.map((product) => ({
-    slug: product.slug,
-  }));
+  return products.map((product) => ({ slug: product.slug }));
 }
 
-export default async function ProductDetailPage({
-  params,
-}: ProductDetailPageProps) {
+export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const { slug } = await params;
-  const { product, source, fallbackReason } = await getProductBySlug(slug);
+  const { product } = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
   }
 
-  const isOutOfStock = product.stock <= 0;
-
   return (
-    <div className="space-y-8">
-      <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-        <Link href="/" className="transition-colors hover:text-foreground">
-          Home
-        </Link>
+    <div className="space-y-6">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Link href="/">Home</Link>
         <ChevronRight className="size-4" />
-        <Link href="/products" className="transition-colors hover:text-foreground">
-          Products
-        </Link>
+        <Link href="/products">Shop</Link>
         <ChevronRight className="size-4" />
         <span className="text-foreground">{product.name}</span>
       </div>
 
-      <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="overflow-hidden rounded-3xl border border-border/60 bg-card/75 p-4 shadow-sm">
-          <div className="relative h-[22rem] overflow-hidden rounded-2xl sm:h-[30rem]">
-            <ProductCardImage
-              src={product.imageUrl}
-              alt={product.name}
-              loading="eager"
-            />
+      <section className="grid gap-6 lg:grid-cols-[1.05fr_1fr]">
+        <div className="grid gap-4 sm:grid-cols-[120px_1fr]">
+          <div className="order-2 flex gap-3 sm:order-1 sm:flex-col">
+            {[1, 2, 3].map((item) => (
+              <div key={item} className="relative h-28 flex-1 overflow-hidden rounded-2xl border border-border bg-[#e8e8e8] sm:flex-none">
+                <ProductCardImage src={product.imageUrl} alt={`${product.name} preview ${item}`} />
+              </div>
+            ))}
+          </div>
+          <div className="relative order-1 h-[380px] overflow-hidden rounded-3xl bg-[#e8e8e8] sm:order-2 lg:h-[420px]">
+            <ProductCardImage src={product.imageUrl} alt={product.name} loading="eager" />
           </div>
         </div>
 
-        <div className="space-y-5 rounded-3xl border border-border/60 bg-card/75 p-6 shadow-sm">
-          <div className="space-y-3">
-            <Badge variant="outline" className="rounded-full px-3 py-1">
-              {product.category}
-            </Badge>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              {product.name}
-            </h1>
-            <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5">
-                <Star className="size-4 fill-current text-amber-500" />
-                {product.rating.toFixed(1)} rating
-              </span>
-              <span>{product.reviewCount} reviews</span>
-              <span>{isOutOfStock ? "Out of stock" : `${product.stock} in stock`}</span>
-            </div>
+        <div className="space-y-5">
+          <h1 className="text-4xl font-bold uppercase tracking-tight sm:text-5xl">{product.name}</h1>
+          <div className="flex items-center gap-1 text-amber-500">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Star key={i} className="size-5 fill-current" />
+            ))}
+            <span className="ml-2 text-sm text-muted-foreground">{product.rating.toFixed(1)}/5</span>
           </div>
+          <div className="flex items-center gap-2">
+            <p className="text-4xl font-bold">{naira.format(product.price)}</p>
+            <span className="rounded-full bg-red-100 px-3 py-1 text-sm font-semibold text-red-500">-20%</span>
+          </div>
+          <p className="border-b border-border pb-4 text-muted-foreground">{product.description}</p>
 
-          <p className="text-3xl font-bold tracking-tight text-foreground">
-            {naira.format(product.price)}
-          </p>
-
-          <p className="text-base leading-7 text-muted-foreground">
-            {product.description}
-          </p>
-
-          <div className="grid gap-3 rounded-2xl border border-border/60 bg-background/60 p-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-3">
-              <ShieldCheck className="size-4 text-primary" />
-              <span>Starter-ready product detail UI with live data support.</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Truck className="size-4 text-primary" />
-              <span>Delivery rules stay customizable per client project.</span>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">Choose Size</p>
+            <div className="flex flex-wrap gap-2">
+              {["Small", "Medium", "Large", "X-Large"].map((size) => (
+                <button
+                  key={size}
+                  className={`h-10 rounded-full px-5 text-sm ${size === "Large" ? "bg-black text-white" : "bg-[#e7e7e7] text-muted-foreground"}`}
+                >
+                  {size}
+                </button>
+              ))}
             </div>
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <AddToCartButton product={product} size="lg" redirectTo="/cart" />
-            <Link href="/checkout">
-              <span
-                className={cn(
-                  buttonVariants({ size: "lg", variant: "outline" }),
-                )}
-              >
-                Buy Now
-              </span>
-            </Link>
-          </div>
-
-          {source === "mock" && fallbackReason ? (
-            <div className="rounded-2xl border border-amber-300/60 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-              Product fallback reason: {fallbackReason}
+            <div className="flex h-12 items-center rounded-full bg-[#e7e7e7] px-3">
+              <button className="px-2">
+                <Minus className="size-4" />
+              </button>
+              <span className="w-10 text-center text-sm">1</span>
+              <button className="px-2">
+                <Plus className="size-4" />
+              </button>
             </div>
-          ) : null}
+            <AddToCartButton product={product} className="h-12 rounded-full px-10" />
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-4 border-t border-border pt-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-3xl font-bold">All Reviews</h2>
+          <button className="inline-flex items-center gap-2 rounded-full bg-black px-5 py-2 text-sm text-white">
+            <SlidersHorizontal className="size-4" />
+            Write a Review
+          </button>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          {["Samantha D.", "Alex M.", "Ethan R.", "Olivia P."].map((name) => (
+            <article key={name} className="rounded-2xl border border-border bg-white p-5">
+              <div className="flex items-center gap-1 text-amber-500">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <Star key={i} className="size-4 fill-current" />
+                ))}
+              </div>
+              <p className="mt-3 text-lg font-semibold">{name}</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                This t-shirt exceeded my expectations. Great fit, quality, and comfort.
+              </p>
+            </article>
+          ))}
         </div>
       </section>
     </div>
